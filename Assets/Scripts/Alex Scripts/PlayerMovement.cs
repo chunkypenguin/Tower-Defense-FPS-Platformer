@@ -15,6 +15,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float groundDistance;
     [SerializeField] LayerMask groundLayerMask;
 
+    [SerializeField] float forwardSpeed;
+
     Vector3 velocity;
     bool isGrounded;
 
@@ -29,7 +31,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        //float z = Input.GetAxis("Vertical");
+        float z = forwardSpeed;
 
         Vector3 move = transform.right * x + transform.forward * z;
 
