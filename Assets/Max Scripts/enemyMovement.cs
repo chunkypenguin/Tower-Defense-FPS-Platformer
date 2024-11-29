@@ -36,6 +36,7 @@ public class EnemyMovement : MonoBehaviour
             // If the enemy has reached the end of the path
             if (pathIndex >= LevelManager.main.path.Length)
             {
+                EnemySpawner.onEnemyDestroy.Invoke();
                 Destroy(gameObject); // Destroy enemy when it reaches the end of the path
                 return;
             }
