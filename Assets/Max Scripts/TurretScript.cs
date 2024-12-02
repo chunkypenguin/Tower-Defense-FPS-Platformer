@@ -5,69 +5,88 @@ using UnityEditor;
 
 public class TowerScript : MonoBehaviour
 {
-    public Transform gun;  // Reference to the gun object (if it's separate from the turret)
-    public float rotationSpeed = 5f; // Speed at which the gun rotates
-    public float detectionRange = 10f; // Detection range for finding enemies
-    public LayerMask enemyLayer;  // Layer mask for enemies
-
-    private Transform targetEnemy;  // The current target enemy
+    public GameObject projectilePrefab;  // The projectile the tower will shoot
+    public float fireRate = 1f;          // Time in seconds between each shot
+    public float shootingRadius = 5f;    // The radius in which the tower shoots
+    public int numberOfShots = 8;        // The number of shots fired in the circle
+    public float projectileSpeed = 10f;  // Speed at which the projectile moves
+    public float projectileLifetime = 5f; // Time in seconds before the projectile despawns
+    private float fireCooldown;          // Timer to control fire rate
 
     void Update()
     {
-        // Find the nearest enemy within detection range
-        FindTargetEnemy();
+        fireCooldown -= Time.deltaTime;
 
-        // If there is a target enemy, rotate the gun towards it
-        if (targetEnemy != null)
+        // If fire cooldown is over, shoot in a circular pattern
+        if (fireCooldown <= 0)
         {
-            RotateGun();
+            ShootInCircle();
+            fireCooldown = 1f / fireRate; // Reset cooldown based on fire rate
         }
     }
 
-    // Method to find the nearest enemy in range
-    void FindTargetEnemy()
+    void ShootInCircle()
     {
-        // Check for enemies in range from the turret's position
-        Collider2D[] enemiesInRange = Physics2D.OverlapCircleAll(transform.position, detectionRange, enemyLayer);
+        float angleStep = 360f / numberOfShots;  // Angle between each shot
 
-        if (enemiesInRange.Length == 0)
+        for (int i = 0; i < numberOfShots; i++)
         {
-            targetEnemy = null; // No enemies found
-            return;
-        }
+            float angle = i * angleStep; // Calculate angle for each shot
 
-        // Find the nearest enemy
-        float closestDistance = Mathf.Infinity;
-        foreach (var enemy in enemiesInRange)
-        {
-            float distanceToEnemy = Vector2.Distance(transform.position, enemy.transform.position);
-            if (distanceToEnemy < closestDistance)
+            // Convert the angle to a direction vector in world space
+            Vector3 direction = new Vector3(Mathf.Cos(Mathf.Deg2Rad * angle), 0, Mathf.Sin(Mathf.Deg2Rad * angle));
+            Vector3 shootPosition = transform.position + direction * shootingRadius;
+
+            // Create and fire the projectile
+            GameObject projectile = Instantiate(projectilePrefab, shootPosition, Quaternion.identity);
+
+            // Set the projectile's velocity in the calculated direction
+            Rigidbody rb = projectile.GetComponent<Rigidbody>();
+            if (rb != null)
             {
-                closestDistance = distanceToEnemy;
-                targetEnemy = enemy.transform;
+                rb.velocity = direction * projectileSpeed;
+            }
+
+            // Destroy the projectile after 'projectileLifetime' seconds
+            Destroy(projectile, projectileLifetime);
+
+            // Add the OnCollisionEnter behavior to handle destruction of enemies and projectiles
+            Projectile projectileScript = projectile.AddComponent<Projectile>();
+            projectileScript.projectileLifetime = projectileLifetime;
+        }
+    }
+}
+
+public class Projectile : MonoBehaviour
+{
+    public float projectileLifetime; // Lifetime of the projectile
+    private EnemySpawner enemySpawner; // Reference to the EnemySpawner
+
+    void Start()
+    {
+        // Find the EnemySpawner in the scene
+        enemySpawner = FindObjectOfType<EnemySpawner>();
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        // Log the object the projectile collided with
+        Debug.Log("Projectile collided with: " + collision.gameObject.name);
+
+        // Check if the projectile collides with an enemy (with the "Enemy" tag)
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            // Destroy the projectile
+            Destroy(gameObject);
+
+            // Destroy the enemy (target) that was hit
+            Destroy(collision.gameObject);
+
+            // Notify the EnemySpawner that an enemy has been destroyed
+            if (enemySpawner != null)
+            {
+                enemySpawner.EnemyDestroyed(); // Decrease enemiesAlive
             }
         }
-    }
-
-    // Method to rotate the gun towards the target enemy
-    void RotateGun()
-    {
-        // Get the direction from the turret to the enemy
-        Vector2 directionToEnemy = targetEnemy.position - transform.position;  // Turret's position, not gun's
-
-        // Calculate the rotation angle in radians
-        float angle = Mathf.Atan2(directionToEnemy.y, directionToEnemy.x) * Mathf.Rad2Deg;
-
-        // Smoothly rotate the gun towards the target
-        Quaternion targetRotation = Quaternion.Euler(new Vector3(0, 0, angle));
-        gun.rotation = Quaternion.Slerp(gun.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-    }
-
-    // Debug method to visualize the detection range
-    void OnDrawGizmosSelected()
-    {
-        // Draw detection range from the turret's position
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);  // Range drawn from turret center
     }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class EnemySpawner : MonoBehaviour
 
     private int currentWave = 1;
     private float timeSinceLastSpawn;
-    private int enemiesAlive;
+    public int enemiesAlive;
     private int enemiesLeftToSpawn;
     private bool isSpawning = false;
 
@@ -30,7 +31,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(Startwave());
+        StartCoroutine(StartWave());
     }
 
     private int EnemiesPerWave()
@@ -40,37 +41,42 @@ public class EnemySpawner : MonoBehaviour
 
     private void Update()
     {
-        if(!isSpawning) return;
+        if (!isSpawning) return;
 
         timeSinceLastSpawn += Time.deltaTime;
 
-        if(timeSinceLastSpawn >= (1f/ enemiesPerSec) && enemiesLeftToSpawn > 0)
+        if (timeSinceLastSpawn >= (1f / enemiesPerSec) && enemiesLeftToSpawn > 0)
         {
             SpawnEnemy();
-            enemiesLeftToSpawn --;
-            enemiesAlive ++;
+            enemiesLeftToSpawn--;
+            enemiesAlive++;
             timeSinceLastSpawn = 0f;
         }
 
-        if(enemiesAlive == 0 && enemiesLeftToSpawn == 0)
+        if (enemiesAlive == 0 && enemiesLeftToSpawn == 0)
         {
             EndWave();
         }
+
+        if (currentWave == 2)
+        {
+            SceneManager.LoadScene(1);
+        }
     }
 
-    private IEnumerator Startwave()
+    private IEnumerator StartWave()
     {
         yield return new WaitForSeconds(timeBetweenWaves);
         isSpawning = true;
         enemiesLeftToSpawn = EnemiesPerWave();
-
     }
+
     private void EndWave()
     {
         isSpawning = false;
         timeSinceLastSpawn = 0f;
         currentWave++;
-        StartCoroutine(Startwave());
+        StartCoroutine(StartWave());
     }
 
     private void SpawnEnemy()
@@ -80,10 +86,9 @@ public class EnemySpawner : MonoBehaviour
         Instantiate(prefabToSpawn, LevelManager.main.StartingPoint.position, Quaternion.identity);
     }
 
-    private void EnemyDestroyed()
+    // This method is called when an enemy is destroyed
+    public void EnemyDestroyed()
     {
-        enemiesAlive--;
+        enemiesAlive--; // Subtract one from the enemies alive count
     }
-
-
 }
