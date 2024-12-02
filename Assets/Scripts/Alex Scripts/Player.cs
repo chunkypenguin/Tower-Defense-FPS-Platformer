@@ -20,4 +20,14 @@ public class Player : MonoBehaviour
         currentHealth -= damage;
         healthBar.SetHealth(currentHealth);
     }
+
+    public void Update()
+    {
+        if(currentHealth <= 0)
+        {
+            Debug.Log("game over");
+        }
+    }
+
+
 }
