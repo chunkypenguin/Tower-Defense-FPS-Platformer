@@ -13,6 +13,8 @@ public class TowerScript : MonoBehaviour
     public float projectileLifetime = 5f; // Time in seconds before the projectile despawns
     private float fireCooldown;          // Timer to control fire rate
 
+    public int price = 50;
+
     void Update()
     {
         fireCooldown -= Time.deltaTime;
