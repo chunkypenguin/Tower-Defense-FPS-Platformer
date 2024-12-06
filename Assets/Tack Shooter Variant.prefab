@@ -13,10 +13,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tack Shooter Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 3619060796380951245, guid: f62c969dd393ba94c8788dc6297e3a31,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 7aeab473785b5094b976d0a072273f9f, type: 2}
     - target: {fileID: 6932143437251936043, guid: f62c969dd393ba94c8788dc6297e3a31,
         type: 3}
       propertyPath: fireRate
-      value: 0.75
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6932143437251936043, guid: f62c969dd393ba94c8788dc6297e3a31,
+        type: 3}
+      propertyPath: projectileLifetime
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 7650628957466921767, guid: f62c969dd393ba94c8788dc6297e3a31,
         type: 3}

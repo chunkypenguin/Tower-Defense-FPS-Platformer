@@ -25,7 +25,7 @@ public class ArtillaryScript : MonoBehaviour
         if (fireCooldown <= 0 && target != null)
         {
             // Rotate to face the target
-            RotateToTarget();
+            //RotateToTarget();
 
             // Shoot at the target
             ShootAtTarget();
@@ -62,20 +62,7 @@ public class ArtillaryScript : MonoBehaviour
     }
 
     // Rotate the tower to face the target
-    void RotateToTarget()
-    {
-        if (target != null)
-        {
-            // Calculate the direction to the target
-            Vector3 direction = target.position - transform.position;
-
-            // Create a rotation that looks in the direction of the target
-            Quaternion rotation = Quaternion.LookRotation(direction);
-
-            // Apply the rotation to the tower (smooth rotation can be added if needed)
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 10f);
-        }
-    }
+    
 
     // Shoot a projectile towards the target enemy
     void ShootAtTarget()
