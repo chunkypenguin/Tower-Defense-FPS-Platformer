@@ -58,9 +58,9 @@ public class EnemySpawner : MonoBehaviour
             EndWave();
         }
 
-        if (currentWave == 6)
+        if (currentWave == 4)
         {
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(2);
         }
     }
 
@@ -89,6 +89,9 @@ public class EnemySpawner : MonoBehaviour
     // This method is called when an enemy is destroyed
     public void EnemyDestroyed()
     {
-        enemiesAlive--; // Subtract one from the enemies alive count
+        enemiesAlive--;
+        GameManager.Instance.playerMoney++;
+        GameManager.Instance.playerMoney++;
+         // Subtract one from the enemies alive count
     }
 }
