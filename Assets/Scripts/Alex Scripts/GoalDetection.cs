@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GoalDetection : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class GoalDetection : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             Debug.Log("You Win");
+            SceneManager.LoadScene(0);
         }
     }
 }
