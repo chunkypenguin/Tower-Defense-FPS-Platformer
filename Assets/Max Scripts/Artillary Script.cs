@@ -46,7 +46,7 @@ public class ArtillaryScript : MonoBehaviour
         // Loop through all enemies within the radius and find the nearest one
         foreach (Collider collider in enemiesInRange)
         {
-            if (collider.CompareTag("Enemy"))
+            if (collider.CompareTag("Enemy") || collider.CompareTag("Player"))
             {
                 float distanceToEnemy = Vector3.Distance(transform.position, collider.transform.position);
                 if (distanceToEnemy < shortestDistance)
