@@ -58,7 +58,7 @@ public class EnemySpawner : MonoBehaviour
             EndWave();
         }
 
-        if (currentWave == 2)
+        if (currentWave == 6)
         {
             SceneManager.LoadScene(1);
         }
